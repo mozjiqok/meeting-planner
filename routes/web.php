@@ -11,7 +11,7 @@ Route::redirect('/', '/admin');
 | Admin Panel — protected by HTTP Basic Auth
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->middleware('auth.basic.once')->group(function () {
+Route::prefix('admin')->middleware('auth.basic')->group(function () {
     // Dashboard / summary
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
