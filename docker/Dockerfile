@@ -1,8 +1,8 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Install system deps
 RUN apk add --no-cache \
-    git curl unzip sqlite-libs \
+    git curl unzip sqlite-dev \
     libzip-dev oniguruma-dev \
     && docker-php-ext-install pdo pdo_sqlite zip bcmath opcache
 
