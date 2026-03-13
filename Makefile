@@ -16,6 +16,7 @@ docker-setup:
 	@if [ ! -f .env ]; then cp .env.example .env; echo "✅ .env created!"; fi
 	docker compose build
 	docker compose up -d app
+	docker compose exec app composer install --no-interaction --prefer-dist --optimize-autoloader
 	docker compose exec app php artisan key:generate
 	docker compose exec app touch database/database.sqlite
 	docker compose exec app chown www-data:www-data database/database.sqlite
