@@ -13,7 +13,7 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
 class BookingConversation extends Conversation
 {
-    protected ?string $step = null;
+    protected ?string $step = 'start';
 
     // Accumulated answers
     public ?string $answerQ1 = null;
