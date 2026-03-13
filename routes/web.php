@@ -26,3 +26,8 @@ Route::prefix('admin')->middleware('auth.basic')->group(function () {
     Route::delete('/bookings/{booking}', [DashboardController::class, 'cancelBooking'])->name('admin.bookings.cancel');
     Route::patch('/bookings/{booking}/url', [DashboardController::class, 'updateMeetingUrl'])->name('admin.bookings.url');
 });
+
+// Telegram Webhook
+Route::post('/telegram/webhook', function (\SergiX44\Nutgram\Nutgram $bot) {
+    $bot->run();
+});
