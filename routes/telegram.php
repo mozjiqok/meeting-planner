@@ -44,6 +44,10 @@ $bot->onCommand('unblock', [AdminCommandHandler::class, 'unblock'])
 |--------------------------------------------------------------------------
 */
 $bot->fallback(function (Nutgram $bot) {
+    if ($bot->chat()?->type !== \SergiX44\Nutgram\Telegram\Properties\ChatType::PRIVATE) {
+        return;
+    }
+
     $bot->sendMessage(
         "Не понимаю вас 🤔\n\n" .
         "Доступные команды:\n" .
