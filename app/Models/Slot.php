@@ -40,13 +40,13 @@ class Slot extends Model
 
     public function isBlockedOn(\Carbon\Carbon $date): bool
     {
-        return $this->blocks()->where('blocked_date', $date->toDateString())->exists();
+        return $this->blocks()->whereDate('blocked_date', $date->toDateString())->exists();
     }
 
     public function isBookedOn(\Carbon\Carbon $date): bool
     {
         return $this->bookings()
-            ->where('booking_date', $date->toDateString())
+            ->whereDate('booking_date', $date->toDateString())
             ->where('status', 'confirmed')
             ->exists();
     }

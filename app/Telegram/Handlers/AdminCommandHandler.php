@@ -32,7 +32,7 @@ class AdminCommandHandler
             ->whereBetween('booking_date', [$today, $end])
             ->with('slot')
             ->get()
-            ->keyBy(fn ($b) => $b->slot_id . '_' . $b->booking_date);
+            ->keyBy(fn ($b) => $b->slot_id . '_' . $b->booking_date->toDateString());
 
         $blocks = SlotBlock::whereBetween('blocked_date', [$today, $end])
             ->get()
@@ -56,7 +56,7 @@ class AdminCommandHandler
             $lines[] = "\n<b>{$dayLabel}</b>";
             foreach ($daySlots as $slot) {
                 $key     = $slot->id . '_' . $date->toDateString();
-                $blocked = isset($blocks[$slot->id]) && $blocks[$slot->id]->contains('blocked_date', $date->toDateString());
+                $blocked = isset($blocks[$slot->id]) && $blocks[$slot->id]->contains(fn($b) => $b->blocked_date->toDateString() === $date->toDateString());
                 $booking = $bookings->get($key);
 
                 if ($blocked) {
@@ -158,7 +158,7 @@ class AdminCommandHandler
             return;
         }
 
-        SlotBlock::where('slot_id', $slot->id)->where('blocked_date', $date)->delete();
+        SlotBlock::where('slot_id', $slot->id)->whereDate('blocked_date', $date)->delete();
         $dow = Carbon::parse($date, config('app.timezone'))->locale('ru')->isoFormat('D MMMM (ddd)');
         $bot->sendMessage("✅ Слот {$time} {$dow} разблокирован.");
     }
