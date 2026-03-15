@@ -24,22 +24,22 @@
                 <td><strong>{{ $slot->formatted_time }}</strong></td>
                 <td>
                     @if($slot->is_active)
-                        <span class="badge badge-green">Активен</span>
+                    <span class="badge badge-green">Активен</span>
                     @else
-                        <span class="badge badge-red">Отключён</span>
+                    <span class="badge badge-red">Отключён</span>
                     @endif
                 </td>
                 <td>
                     <form method="POST" action="{{ route('admin.slots.update', $slot) }}" style="display:flex;gap:.5rem;align-items:center;">
                         @csrf @method('PATCH')
                         <input type="url" name="default_meeting_url" value="{{ $slot->default_meeting_url }}"
-                               placeholder="https://meet.example.com/room" style="min-width:260px;">
+                            placeholder="https://meet.example.com/room" style="min-width:260px;">
                         <label style="display:flex;align-items:center;gap:.3rem;white-space:nowrap;margin:0;color:var(--muted);">
                             <input type="checkbox" name="is_active" value="1" @checked($slot->is_active) style="width:auto;"> Активен
                         </label>
                 </td>
                 <td>
-                        <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
                     </form>
                 </td>
             </tr>
@@ -58,7 +58,7 @@
                 <label>Слот</label>
                 <select name="slot_id">
                     @foreach($slots as $slot)
-                        <option value="{{ $slot->id }}">{{ $slot->day_name }} — {{ $slot->formatted_time }}</option>
+                    <option value="{{ $slot->id }}">{{ $slot->day_name }} — {{ $slot->formatted_time }}</option>
                     @endforeach
                 </select>
             </div>
@@ -84,7 +84,12 @@
     <div class="card-title">Активные блокировки</div>
     <table>
         <thead>
-            <tr><th>Дата</th><th>Слот</th><th>Причина</th><th></th></tr>
+            <tr>
+                <th>Дата</th>
+                <th>Слот</th>
+                <th>Причина</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
             @foreach($blocks as $block)
@@ -109,27 +114,34 @@
 <div class="card">
     <div class="card-title">📅 Записи на 14 дней</div>
     @if($bookings->isEmpty())
-        <div class="empty">Нет записей</div>
+    <div class="empty">Нет записей</div>
     @else
-        <table>
-            <thead><tr><th>Дата</th><th>Время</th><th>Подписчик</th><th></th></tr></thead>
-            <tbody>
-                @foreach($bookings as $booking)
-                <tr>
-                    <td>{{ $booking->booking_date->locale('ru')->isoFormat('D MMMM (ddd)') }}</td>
-                    <td><strong>{{ $booking->slot->formatted_time }}</strong></td>
-                    <td>
-                        @if($booking->telegram_username)
-                            @{{ $booking->telegram_username }}
-                        @else
-                            {{ $booking->telegram_first_name }}
-                        @endif
-                    </td>
-                    <td><a href="{{ route('admin.bookings') }}" class="btn btn-ghost btn-sm">Детали</a></td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Время</th>
+                <th>Подписчик</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($bookings as $booking)
+            <tr>
+                <td>{{ $booking->booking_date->locale('ru')->isoFormat('D MMMM (ddd)') }}</td>
+                <td><strong>{{ $booking->slot->formatted_time }}</strong></td>
+                <td>
+                    @if($booking->telegram_username)
+                    {{ '@' . $booking->telegram_username }}
+                    @else
+                    {{ $booking->telegram_first_name }}
+                    @endif
+                </td>
+                <td><a href="{{ route('admin.bookings') }}" class="btn btn-ghost btn-sm">Детали</a></td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
     @endif
 </div>
 @endsection
