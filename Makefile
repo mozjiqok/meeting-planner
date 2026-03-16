@@ -14,11 +14,11 @@ setup:
 # ── First-time setup (Using ONLY Docker) ──────────────────────────────────────
 docker-setup:
 	@if [ ! -f .env ]; then cp .env.example .env; echo "✅ .env created!"; fi
+	@touch database/database.sqlite
 	docker compose build
 	docker compose up -d app
 	docker compose exec app composer install --no-interaction --prefer-dist --optimize-autoloader
 	docker compose exec app php artisan key:generate
-	docker compose exec app touch database/database.sqlite
 	docker compose exec app chown www-data:www-data database/database.sqlite
 	docker compose exec app php artisan migrate --force
 	docker compose exec app php artisan db:seed --force
