@@ -302,6 +302,9 @@ class BookingConversation extends Conversation
             return;
         }
 
+        $jitsiRoom = 'mozg_vl-' . \Illuminate\Support\Str::random(12);
+        $jitsiUrl  = "https://meet.jit.si/{$jitsiRoom}";
+
         $booking = Booking::create([
             'slot_id'             => $this->selectedSlotId,
             'booking_date'        => $this->selectedDate,
@@ -313,7 +316,7 @@ class BookingConversation extends Conversation
                 'q2' => $this->answerQ2,
                 'q3' => $this->answerQ3,
             ],
-            'meeting_url'         => $slot->default_meeting_url,
+            'meeting_url'         => $jitsiUrl,
             'status'              => 'confirmed',
         ]);
 
