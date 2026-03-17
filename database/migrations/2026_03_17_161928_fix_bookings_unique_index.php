@@ -8,6 +8,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -16,11 +17,12 @@ return new class extends Migration
     {
         Schema::table('bookings', function (Blueprint $table) {
             // Drop the old unique constraint that included status
-            $table->dropUnique(['slot_id', 'booking_date', 'status']);
+            // TODO $table->dropUnique(['slot_id', 'booking_date', 'status']);
 
             // Create a new partial unique index for confirmed bookings only
             // This ensures only one person can book a specific slot at a specific date
-            $table->unique(['slot_id', 'booking_date'], 'bookings_confirmed_unique')->where('status', 'confirmed');
+            // $table->unique(['slot_id', 'booking_date'], 'bookings_confirmed_unique')->where('status', 'confirmed');
+            DB::statement('CREATE UNIQUE INDEX bookings_confirmed_unique ON bookings (slot_id, booking_date) WHERE status = "confirmed"');
         });
     }
 
