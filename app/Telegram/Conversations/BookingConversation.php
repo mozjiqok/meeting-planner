@@ -48,7 +48,7 @@ class BookingConversation extends Conversation
             ->first();
 
         if ($existing) {
-            $dt = $existing->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm');
+            $dt = $existing->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z)');
             $bot->sendMessage(
                 "📅 У вас уже есть запись на звонок:\n\n<b>{$dt}</b>\n\nЧтобы отменить, отправьте /cancel",
                 parse_mode: ParseMode::HTML
@@ -210,9 +210,10 @@ class BookingConversation extends Conversation
             return;
         }
 
+        $tzOffset = $now->isoFormat('UTC Z');
         $bot->sendMessage(
             "✅ <b>Отлично! Вы ответили на все вопросы.</b>\n\n" .
-            "Выберите удобное время для звонка:",
+            "Выберите удобное время для звонка\n(указано по {$tzOffset}):",
             parse_mode: ParseMode::HTML,
             reply_markup: $keyboard
         );
@@ -250,7 +251,7 @@ class BookingConversation extends Conversation
 
         $dt = Carbon::parse($this->selectedDate . ' ' . $slot->start_time, config('app.timezone'))
             ->locale('ru')
-            ->isoFormat('dddd, D MMMM [в] HH:mm');
+            ->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z)');
 
         $keyboard = InlineKeyboardMarkup::make()->addRow(
             InlineKeyboardButton::make('✅ Подтвердить', callback_data: 'confirm:yes'),
@@ -316,7 +317,7 @@ class BookingConversation extends Conversation
             'status'              => 'confirmed',
         ]);
 
-        $dt = $booking->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm');
+        $dt = $booking->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z)');
         $linkText = $booking->meeting_url
             ? "\n\n🔗 <b>Ссылка на звонок:</b> {$booking->meeting_url}"
             : '';

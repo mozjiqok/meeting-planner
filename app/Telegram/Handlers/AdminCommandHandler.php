@@ -95,7 +95,7 @@ class AdminCommandHandler
         }
 
         foreach ($bookings as $booking) {
-            $dt      = $booking->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm');
+            $dt      = $booking->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z)');
             $name    = $booking->telegram_username ? "@{$booking->telegram_username}" : $booking->telegram_first_name;
             $answers = $booking->answers;
 
