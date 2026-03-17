@@ -32,7 +32,7 @@ class UserCommandHandler
             return;
         }
 
-        $dt      = $booking->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z)');
+        $dt      = $booking->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z, zz)');
         $linkRow = $booking->meeting_url ? "\n🔗 <b>Ссылка:</b> {$booking->meeting_url}" : '';
 
         $bot->sendMessage(
