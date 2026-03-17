@@ -67,8 +67,6 @@ class BookingConversation extends Conversation
     {
         $bot->sendMessage(
             "👋 <b>Запись на звонок</b>\n\n" .
-            "Я задам вам 3 коротких вопроса, а затем предложу выбрать удобное время.\n\n" .
-            "<b>Вопрос 1 из 3</b>\n" .
             "Опишите вашу главную проблему или вопрос одним предложением:",
             parse_mode: ParseMode::HTML
         );
@@ -83,7 +81,7 @@ class BookingConversation extends Conversation
             return;
         }
         $this->answerQ1 = $text;
-        $this->askQ2($bot);
+        $this->showSlotPicker($bot);
     }
 
     /*──────────────────────────────────────────────────────────────
@@ -212,7 +210,7 @@ class BookingConversation extends Conversation
 
         $tzOffset = $now->isoFormat('UTC Z, zz');
         $bot->sendMessage(
-            "✅ <b>Отлично! Вы ответили на все вопросы.</b>\n\n" .
+            "✅ <b>Отлично!</b>\n\n" .
             "Выберите удобное время для звонка\n(указано по {$tzOffset}):",
             parse_mode: ParseMode::HTML,
             reply_markup: $keyboard

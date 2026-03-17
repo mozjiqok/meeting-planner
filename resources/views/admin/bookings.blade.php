@@ -47,18 +47,8 @@
         {{-- Answers --}}
         <div style="margin-top:1rem; display:grid; gap:.6rem;">
             <div>
-                <span class="text-muted">Главная проблема:</span><br>
+                <span class="text-muted">Вопрос:</span><br>
                 {{ $booking->answers['q1'] ?? '—' }}
-            </div>
-            <div>
-                <span class="text-muted">Изучил архив:</span>
-                <span class="badge {{ ($booking->answers['q2'] ?? '') === 'Да' ? 'badge-green' : 'badge-yellow' }}">
-                    {{ $booking->answers['q2'] ?? '—' }}
-                </span>
-            </div>
-            <div>
-                <span class="text-muted">Ожидаемый результат:</span><br>
-                {{ $booking->answers['q3'] ?? '—' }}
             </div>
         </div>
 

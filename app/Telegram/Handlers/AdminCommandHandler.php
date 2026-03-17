@@ -102,9 +102,8 @@ class AdminCommandHandler
             $bot->sendMessage(
                 "📌 <b>#{$booking->id}</b> — {$dt}\n" .
                 "👤 {$name}\n\n" .
-                "❓ <i>Главная проблема:</i>\n{$answers['q1']}\n\n" .
-                "📚 <i>Изучил архив:</i> {$answers['q2']}\n\n" .
-                "🎯 <i>Ожидаемый результат:</i>\n{$answers['q3']}",
+                "❓ <i>Вопрос:</i>\n{$answers['q1']}\n\n" .
+                "🔗 <i>Ссылка:</i>\n{$booking->meeting_url}",
                 parse_mode: ParseMode::HTML
             );
         }
