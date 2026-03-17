@@ -19,7 +19,10 @@ docker-setup:
 	docker compose up -d app
 	docker compose exec app composer install --no-interaction --prefer-dist --optimize-autoloader
 	docker compose exec app php artisan key:generate
-	docker compose exec app chown www-data:www-data database/database.sqlite
+	docker compose exec app chown -R www-data:www-data database
+	docker compose exec app chown -R www-data:www-data storage bootstrap/cache
+	docker compose exec app touch storage/logs/laravel.log
+	docker compose exec app chown www-data:www-data storage/logs/laravel.log
 	docker compose exec app php artisan migrate --force
 	docker compose exec app php artisan db:seed --force
 	docker compose up -d
