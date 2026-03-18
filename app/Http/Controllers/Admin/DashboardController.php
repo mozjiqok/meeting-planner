@@ -64,7 +64,7 @@ class DashboardController extends Controller
             'start_time'          => $validated['start_time'],
             'duration_minutes'    => $validated['duration_minutes'],
             'default_meeting_url' => $validated['default_meeting_url'] ?? null,
-            'is_active'           => $request->boolean('is_active', true),
+            'is_active'           => $request->boolean('is_active'),
         ]);
 
         return back()->with('success', 'Слот обновлён.');
