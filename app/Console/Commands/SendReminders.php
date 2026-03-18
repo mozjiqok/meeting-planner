@@ -68,7 +68,7 @@ class SendReminders extends Command
 
     private function sendReminder(Nutgram $bot, Booking $booking, string $timeLabel): void
     {
-        $dt      = $booking->call_datetime->locale('ru')->isoFormat('D MMMM [в] HH:mm (UTC Z, zz)');
+        $dt      = $booking->formatUserDatetime();
         $linkRow = $booking->meeting_url ? "\n\n🔗 <b>Ссылка:</b> {$booking->meeting_url}" : '';
 
         try {

@@ -48,7 +48,7 @@ class BookingConversation extends Conversation
             ->first();
 
         if ($existing) {
-            $dt = $existing->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z, zz)');
+            $dt = $existing->formatUserDatetime();
             $bot->sendMessage(
                 "📅 У вас уже есть запись на звонок:\n\n<b>{$dt}</b>\n\nЧтобы отменить, отправьте /cancel",
                 parse_mode: ParseMode::HTML
@@ -156,9 +156,10 @@ class BookingConversation extends Conversation
      *──────────────────────────────────────────────────────────────*/
     private function showSlotPicker(Nutgram $bot): void
     {
-        $tz    = config('app.timezone');
-        $now   = Carbon::now($tz);
-        $slots = Slot::where('is_active', true)->get();
+        $tz     = config('app.timezone');
+        $userTz = config('app.user_timezone');
+        $now    = Carbon::now($tz);
+        $slots  = Slot::where('is_active', true)->get();
 
         if ($slots->isEmpty()) {
             $bot->sendMessage('😔 К сожалению, активных слотов для записи пока нет. Попробуйте позже.');
@@ -191,7 +192,7 @@ class BookingConversation extends Conversation
                     continue;
                 }
 
-                $label = $date->locale('ru')->isoFormat('D MMM (ddd)') . ', ' . $slot->formatted_time;
+                $label = $date->locale('ru')->isoFormat('D MMM (ddd)') . ', ' . $slotDt->copy()->setTimezone($userTz)->isoFormat('HH:mm');
                 $keyboard->addRow(
                     InlineKeyboardButton::make(
                         $label,
@@ -208,7 +209,8 @@ class BookingConversation extends Conversation
             return;
         }
 
-        $tzOffset = $now->isoFormat('UTC Z, zz');
+        $nowUser  = $now->copy()->setTimezone($userTz);
+        $tzOffset = $nowUser->isoFormat('UTC Z, zz');
         $bot->sendMessage(
             "✅ <b>Отлично!</b>\n\n" .
             "Выберите удобное время для звонка\n(указано по {$tzOffset}):",
@@ -247,9 +249,8 @@ class BookingConversation extends Conversation
             return;
         }
 
-        $dt = Carbon::parse($this->selectedDate . ' ' . $slot->start_time, config('app.timezone'))
-            ->locale('ru')
-            ->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z, zz)');
+        $bookingDt = Carbon::parse($this->selectedDate . ' ' . $slot->start_time, config('app.timezone'));
+        $dt = $bookingDt->copy()->setTimezone(config('app.user_timezone'))->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z, zz)');
 
         $keyboard = InlineKeyboardMarkup::make()->addRow(
             InlineKeyboardButton::make('✅ Подтвердить', callback_data: 'confirm:yes'),
@@ -318,7 +319,7 @@ class BookingConversation extends Conversation
             'status'              => 'confirmed',
         ]);
 
-        $dt = $booking->call_datetime->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z, zz)');
+        $dt = $booking->formatUserDatetime();
         $linkText = $booking->meeting_url
             ? "\n\n🔗 <b>Ссылка на звонок:</b> {$booking->meeting_url}"
             : '';

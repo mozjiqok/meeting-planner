@@ -43,6 +43,19 @@ class Booking extends Model
         );
     }
 
+    /** Returns the datetime of the call in User's timezone (from .env) */
+    public function getUserDatetimeAttribute(): \Carbon\Carbon
+    {
+        return $this->call_datetime->copy()->setTimezone(config('app.user_timezone', 'Europe/Moscow'));
+    }
+
+    /** Format datetime for user messages */
+    public function formatUserDatetime(): string
+    {
+        $dt = $this->user_datetime;
+        return $dt->locale('ru')->isoFormat('dddd, D MMMM [в] HH:mm (UTC Z, zz)');
+    }
+
     public function scopeUpcoming($query)
     {
         return $query->where('status', 'confirmed')

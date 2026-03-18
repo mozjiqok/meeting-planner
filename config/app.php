@@ -67,6 +67,8 @@ return [
 
     'timezone' => env('APP_TIMEZONE', 'UTC'),
 
+    'user_timezone' => env('USER_TIMEZONE', 'Europe/Moscow'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
