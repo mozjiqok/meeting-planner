@@ -18,6 +18,7 @@ class Booking extends Model
         'status',
         'reminder_24h_sent',
         'reminder_1h_sent',
+        'reminder_admin_sent',
     ];
 
     protected $casts = [
@@ -25,6 +26,7 @@ class Booking extends Model
         'answers'          => 'array',
         'reminder_24h_sent'=> 'boolean',
         'reminder_1h_sent' => 'boolean',
+        'reminder_admin_sent' => 'boolean',
     ];
 
     public function slot(): BelongsTo

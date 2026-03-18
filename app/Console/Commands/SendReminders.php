@@ -11,7 +11,7 @@ use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 class SendReminders extends Command
 {
     protected $signature   = 'reminders:send';
-    protected $description = 'Send 24h and 1h reminders for upcoming bookings';
+    protected $description = 'Send 24h, 1h user reminders and 15m admin reminder';
 
     public function handle(Nutgram $bot): int
     {
@@ -23,7 +23,8 @@ class SendReminders extends Command
             ->where('booking_date', '>=', $now->toDateString())
             ->where(function ($q) {
                 $q->where('reminder_24h_sent', false)
-                  ->orWhere('reminder_1h_sent', false);
+                  ->orWhere('reminder_1h_sent', false)
+                  ->orWhere('reminder_admin_sent', false);
             })
             ->with('slot')
             ->get();
@@ -50,6 +51,16 @@ class SendReminders extends Command
                 $this->sendReminder($bot, $booking, '1 час');
                 $booking->update(['reminder_1h_sent' => true]);
             }
+
+            // 15-minute ADMIN reminder window: between 10m and 20m before
+            if (
+                !$booking->reminder_admin_sent
+                && $now->diffInMinutes($callDt, false) <= 20
+                && $now->diffInMinutes($callDt, false) >= 10
+            ) {
+                $this->sendAdminReminder($bot, $booking);
+                $booking->update(['reminder_admin_sent' => true]);
+            }
         }
 
         return self::SUCCESS;
@@ -72,6 +83,41 @@ class SendReminders extends Command
             );
         } catch (\Throwable $e) {
             $this->warn("Failed to send reminder to {$booking->telegram_user_id}: {$e->getMessage()}");
+        }
+    }
+
+    private function sendAdminReminder(Nutgram $bot, Booking $booking): void
+    {
+        $adminId = config('nutgram.admin_id');
+        if (!$adminId) {
+            return;
+        }
+
+        $dt   = $booking->call_datetime->locale('ru')->isoFormat('HH:mm');
+        $name = $booking->telegram_username ? "@{$booking->telegram_username}" : $booking->telegram_first_name;
+        $ans  = $booking->answers;
+
+        $msg = "⚡️ <b>Скоро звонок!</b> (в {$dt})\n\n" .
+               "👤 <b>Клиент:</b> {$name}\n" .
+               "❓ <b>Вопрос:</b>\n<i>{$ans['q1']}</i>";
+
+        if (!empty($ans['q2'])) {
+            $msg .= "\n\n📚 <b>Архив изучен:</b> {$ans['q2']}";
+        }
+        if (!empty($ans['q3'])) {
+            $msg .= "\n🎯 <b>Ожидание:</b>\n<i>{$ans['q3']}</i>";
+        }
+
+        $msg .= "\n\n🔗 <b>Ссылка:</b>\n{$booking->meeting_url}";
+
+        try {
+            $bot->sendMessage(
+                chat_id: $adminId,
+                text: $msg,
+                parse_mode: ParseMode::HTML
+            );
+        } catch (\Throwable $e) {
+            $this->warn("Failed to send admin reminder to {$adminId}: {$e->getMessage()}");
         }
     }
 }
