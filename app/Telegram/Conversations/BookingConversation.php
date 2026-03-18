@@ -192,7 +192,9 @@ class BookingConversation extends Conversation
                     continue;
                 }
 
-                $label = $date->locale('ru')->isoFormat('D MMM (ddd)') . ', ' . $slotDt->copy()->setTimezone($userTz)->isoFormat('HH:mm');
+                $userSlotDt = $slotDt->copy()->setTimezone($userTz);
+                $label = $userSlotDt->locale('ru')->isoFormat('D MMM (ddd), HH:mm');
+
                 $keyboard->addRow(
                     InlineKeyboardButton::make(
                         $label,
