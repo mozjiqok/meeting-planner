@@ -12,22 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->time('start_time')->after('slot_id')->nullable();
-            $table->unsignedSmallInteger('duration_minutes')->after('start_time')->default(0);
-        });
+        // Clear table since it's not in production yet, as requested
+        DB::table('bookings')->delete();
 
-        // Populate existing bookings from the slots table
-        DB::table('bookings')
-            ->join('slots', 'bookings.slot_id', '=', 'slots.id')
-            ->update([
-                'bookings.start_time'       => DB::raw('slots.start_time'),
-                'bookings.duration_minutes' => DB::raw('slots.duration_minutes'),
-            ]);
-        
         Schema::table('bookings', function (Blueprint $table) {
-            $table->time('start_time')->nullable(false)->change();
-            $table->unsignedSmallInteger('duration_minutes')->nullable(false)->change();
+            $table->time('start_time')->after('slot_id');
+            $table->unsignedSmallInteger('duration_minutes')->after('start_time');
         });
     }
 
