@@ -163,6 +163,16 @@ class DashboardController extends Controller
                 text: "❌ Ваша запись на звонок <b>{$dt}</b> была отменена администратором.\n\nЧтобы записаться снова — /start",
                 parse_mode: \SergiX44\Nutgram\Telegram\Properties\ParseMode::HTML
             );
+
+            // Also notify Admin in Telegram (as confirmation)
+            $adminId = config('nutgram.admin_id');
+            if ($adminId) {
+                $bot->sendMessage(
+                    chat_id: $adminId,
+                    text: "❌ <b>Запись #{$booking->id} отменена</b> (в админ-панели)\n\n🗓 {$dt}\n👤 Клиент: " . ($booking->telegram_username ? "@{$booking->telegram_username}" : $booking->telegram_first_name),
+                    parse_mode: \SergiX44\Nutgram\Telegram\Properties\ParseMode::HTML
+                );
+            }
         } catch (\Throwable) {
             // Silently ignore if user blocked the bot
         }

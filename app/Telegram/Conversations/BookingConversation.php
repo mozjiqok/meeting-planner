@@ -336,6 +336,21 @@ class BookingConversation extends Conversation
             parse_mode: ParseMode::HTML
         );
 
+        // Notify Admin
+        $adminId = config('nutgram.admin_id');
+        if ($adminId) {
+            $adminDt = $booking->call_datetime->locale('ru')->isoFormat('D MMMM [в] HH:mm');
+            $userLink = $booking->telegram_username ? "@{$booking->telegram_username}" : "{$booking->telegram_first_name} (ID: {$booking->telegram_user_id})";
+            $bot->sendMessage(
+                "🆕 <b>Новая запись!</b>\n\n" .
+                "🗓 <b>{$adminDt}</b>\n" .
+                "👤 Клиент: {$userLink}\n" .
+                "❓ Вопрос: {$booking->answers['q1']}",
+                chat_id: $adminId,
+                parse_mode: ParseMode::HTML
+            );
+        }
+
         $this->end();
     }
 

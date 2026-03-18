@@ -61,5 +61,19 @@ class UserCommandHandler
         $bot->sendMessage(
             "✅ Запись отменена.\n\nЧтобы записаться снова, отправьте /start"
         );
+
+        // Notify Admin
+        $adminId = config('nutgram.admin_id');
+        if ($adminId) {
+            $dt   = $booking->call_datetime->locale('ru')->isoFormat('D MMMM [в] HH:mm');
+            $name = $booking->telegram_username ? "@{$booking->telegram_username}" : "{$booking->telegram_first_name} (ID: {$bot->userId()})";
+            $bot->sendMessage(
+                "❌ <b>Запись отменена пользователем</b>\n\n" .
+                "🗓 <b>{$dt}</b>\n" .
+                "👤 Клиент: {$name}",
+                chat_id: $adminId,
+                parse_mode: ParseMode::HTML
+            );
+        }
     }
 }
