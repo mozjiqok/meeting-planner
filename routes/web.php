@@ -25,6 +25,10 @@ Route::prefix('admin')->middleware('auth.basic')->group(function () {
     Route::get('/bookings', [DashboardController::class, 'bookingsIndex'])->name('admin.bookings');
     Route::delete('/bookings/{booking}', [DashboardController::class, 'cancelBooking'])->name('admin.bookings.cancel');
     Route::patch('/bookings/{booking}/url', [DashboardController::class, 'updateMeetingUrl'])->name('admin.bookings.url');
+
+    // Bans management
+    Route::post('/bans', [DashboardController::class, 'banUser'])->name('admin.bans.store');
+    Route::delete('/bans/{bannedUser}', [DashboardController::class, 'unbanUser'])->name('admin.bans.destroy');
 });
 
 // Telegram Webhook

@@ -2,10 +2,25 @@
 
 /** @var SergiX44\Nutgram\Nutgram $bot */
 
+use App\Models\BannedUser;
 use App\Telegram\Handlers\AdminCommandHandler;
 use App\Telegram\Handlers\UserCommandHandler;
-use App\Telegram\Conversations\BookingConversation;
 use SergiX44\Nutgram\Nutgram;
+
+/*
+|--------------------------------------------------------------------------
+| Ban check middleware
+|--------------------------------------------------------------------------
+*/
+$bot->middleware(function (Nutgram $bot, $next) {
+    if ($bot->userId() && BannedUser::isBanned($bot->userId())) {
+        $ban = BannedUser::where('telegram_user_id', $bot->userId())->first();
+        $until = $ban->banned_until ? $ban->banned_until->locale('ru')->isoFormat('D MMMM YYYY') : 'навсегда';
+        $bot->sendMessage("🛑 Вы забанены. Доступ ограничен до <b>{$until}</b>.", parse_mode: 'HTML');
+        return;
+    }
+    $next($bot);
+});
 
 /*
 |--------------------------------------------------------------------------

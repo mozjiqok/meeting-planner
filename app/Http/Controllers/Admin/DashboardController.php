@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\BannedUser;
 use App\Models\Slot;
 use App\Models\SlotBlock;
 use Carbon\Carbon;
@@ -107,7 +108,42 @@ class DashboardController extends Controller
             ->limit(50)
             ->get();
 
-        return view('admin.bookings', compact('upcoming', 'past'));
+        $bannedUserIds = BannedUser::where(function ($query) {
+            $query->whereNull('banned_until')
+                ->orWhere('banned_until', '>', now());
+        })->pluck('telegram_user_id')->toArray();
+
+        return view('admin.bookings', compact('upcoming', 'past', 'bannedUserIds'));
+    }
+
+    public function banUser(Request $request)
+    {
+        $validated = $request->validate([
+            'telegram_user_id' => 'required|integer',
+            'banned_until'     => 'nullable|date|after:now',
+            'reason'           => 'nullable|string|max:255',
+        ]);
+
+        BannedUser::updateOrCreate(
+            ['telegram_user_id' => $validated['telegram_user_id']],
+            [
+                'banned_until' => $validated['banned_until'] ? Carbon::parse($validated['banned_until']) : null,
+                'reason'       => $validated['reason'] ?? null,
+            ]
+        );
+
+        return back()->with('success', 'Пользователь забанен.');
+    }
+
+    public function unbanUser(Request $request)
+    {
+        $validated = $request->validate([
+            'telegram_user_id' => 'required|integer',
+        ]);
+
+        BannedUser::where('telegram_user_id', $validated['telegram_user_id'])->delete();
+
+        return back()->with('success', 'Пользователь разбанен.');
     }
 
     public function cancelBooking(Booking $booking)

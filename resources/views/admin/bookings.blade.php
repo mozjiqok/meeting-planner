@@ -25,6 +25,9 @@
                     {{ $booking->telegram_first_name }}
                     @endif
                     · ID: {{ $booking->telegram_user_id }}
+                    @if(in_array($booking->telegram_user_id, $bannedUserIds))
+                    <span class="badge badge-red" style="margin-left:.5rem;">ЗАБАНЕН</span>
+                    @endif
                 </div>
             </div>
             <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
@@ -35,6 +38,22 @@
                         style="width:220px; font-size:.8rem; padding:.35rem .6rem;">
                     <button type="submit" class="btn btn-ghost btn-sm">💾</button>
                 </form>
+                {{-- Ban/Unban --}}
+                @if(in_array($booking->telegram_user_id, $bannedUserIds))
+                <form method="POST" action="{{ route('admin.bans.destroy', $booking->telegram_user_id) }}">
+                    @csrf @method('DELETE')
+                    <input type="hidden" name="telegram_user_id" value="{{ $booking->telegram_user_id }}">
+                    <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--green)">Разбанить</button>
+                </form>
+                @else
+                <form method="POST" action="{{ route('admin.bans.store') }}" style="display:flex;gap:.3rem;align-items:center;">
+                    @csrf
+                    <input type="hidden" name="telegram_user_id" value="{{ $booking->telegram_user_id }}">
+                    <input type="date" name="banned_until" style="width:130px; font-size:.8rem; padding:.35rem .6rem;" required>
+                    <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--red)">Бан</button>
+                </form>
+                @endif
+
                 {{-- Cancel --}}
                 <form method="POST" action="{{ route('admin.bookings.cancel', $booking) }}"
                     onsubmit="return confirm('Отменить запись и уведомить пользователя?')">
@@ -72,6 +91,7 @@
                 <th>Дата</th>
                 <th>Подписчик</th>
                 <th>Статус</th>
+                <th>Действия</th>
             </tr>
         </thead>
         <tbody>
@@ -82,12 +102,31 @@
                     @if($booking->telegram_username) {{ '@' . $booking->telegram_username }}
                     @else {{ $booking->telegram_first_name }}
                     @endif
+                    @if(in_array($booking->telegram_user_id, $bannedUserIds))
+                    <span class="badge badge-red" style="font-size:.7rem; padding:.1rem .3rem;">BAN</span>
+                    @endif
                 </td>
                 <td>
                     @if($booking->status === 'confirmed')
                     <span class="badge badge-green">Состоялся</span>
                     @else
                     <span class="badge badge-red">Отменён</span>
+                    @endif
+                </td>
+                <td>
+                     @if(in_array($booking->telegram_user_id, $bannedUserIds))
+                    <form method="POST" action="{{ route('admin.bans.destroy', $booking->telegram_user_id) }}">
+                        @csrf @method('DELETE')
+                        <input type="hidden" name="telegram_user_id" value="{{ $booking->telegram_user_id }}">
+                        <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--green)">Разбанить</button>
+                    </form>
+                    @else
+                    <form method="POST" action="{{ route('admin.bans.store') }}" style="display:flex;gap:.3rem;align-items:center;">
+                        @csrf
+                        <input type="hidden" name="telegram_user_id" value="{{ $booking->telegram_user_id }}">
+                        <input type="date" name="banned_until" style="width:130px; font-size:.8rem; padding:.35rem .6rem;" required>
+                        <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--red)">Бан</button>
+                    </form>
                     @endif
                 </td>
             </tr>
