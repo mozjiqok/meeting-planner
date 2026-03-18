@@ -69,6 +69,9 @@ return [
 
     'user_timezone' => env('USER_TIMEZONE', 'Europe/Moscow'),
 
+    'booking_slots_limit' => (int) env('BOOKING_SLOTS_LIMIT', 20),
+    'booking_days_limit'  => (int) env('BOOKING_DAYS_LIMIT', 30),
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

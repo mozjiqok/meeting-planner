@@ -38,7 +38,7 @@ class DashboardController extends Controller
     {
         $tz    = config('app.timezone');
         $today = now($tz)->toDateString();
-        $end   = now($tz)->addDays(14)->toDateString();
+        $end   = now($tz)->addDays(config('app.booking_days_limit'))->toDateString();
 
         $slots    = Slot::orderBy('day_of_week')->orderBy('start_time')->get();
         $blocks   = SlotBlock::whereBetween('blocked_date', [$today, $end])->with('slot')->orderBy('blocked_date')->get();

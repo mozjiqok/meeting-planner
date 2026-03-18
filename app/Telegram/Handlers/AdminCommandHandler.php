@@ -25,7 +25,7 @@ class AdminCommandHandler
 
         $tz    = config('app.timezone');
         $today = Carbon::now($tz)->toDateString();
-        $end   = Carbon::now($tz)->addDays(14)->toDateString();
+        $end   = Carbon::now($tz)->addDays(config('app.booking_days_limit'))->toDateString();
 
         $allSlots = Slot::where('is_active', true)->orderBy('day_of_week')->orderBy('start_time')->get();
         $bookings = Booking::where('status', 'confirmed')
@@ -38,12 +38,13 @@ class AdminCommandHandler
             ->get()
             ->groupBy('slot_id');
 
-        $lines = ["<b>📅 Слоты на ближайшие 14 дней:</b>\n"];
+        $daysLimit = config('app.booking_days_limit');
+        $lines = ["<b>📅 Слоты на ближайшие {$daysLimit} дней:</b>\n"];
 
         $tz      = config('app.timezone');
         $nowDate = Carbon::now($tz);
 
-        for ($d = 1; $d <= 14; $d++) {
+        for ($d = 1; $d <= $daysLimit; $d++) {
             $date = $nowDate->copy()->addDays($d);
             $dow  = (int) $date->format('N');
             $dayLabel = $date->locale('ru')->isoFormat('D MMM (ddd)');

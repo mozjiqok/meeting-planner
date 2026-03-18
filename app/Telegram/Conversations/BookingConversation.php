@@ -171,7 +171,10 @@ class BookingConversation extends Conversation
         $found    = 0;
         $days     = 0;
 
-        while ($found < 20 && $days < 30) {
+        $slotsLimit = config('app.booking_slots_limit', 20);
+        $daysLimit  = config('app.booking_days_limit', 30);
+
+        while ($found < $slotsLimit && $days < $daysLimit) {
             $days++;
             $date = $now->copy()->addDays($days);
             $dow  = (int) $date->format('N'); // 1=Mon 7=Sun

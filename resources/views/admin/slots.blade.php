@@ -111,7 +111,7 @@
 
 {{-- Upcoming bookings calendar view --}}
 <div class="card">
-    <div class="card-title">📅 Записи на 14 дней</div>
+    <div class="card-title">📅 Записи на {{ config('app.booking_days_limit') }} дней</div>
     @if($bookings->isEmpty())
     <div class="empty">Нет записей</div>
     @else
