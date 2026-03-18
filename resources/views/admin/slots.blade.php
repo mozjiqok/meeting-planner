@@ -22,7 +22,7 @@
             <tr>
                 <td>{{ $slot->day_name }}</td>
                 <td>
-                    <form method="POST" action="{{ route('admin.slots.update', $slot) }}" style="display:flex;gap:.5rem;align-items:center;">
+                    <form method="POST" action="{{ route('admin.slots.update', $slot, [], false) }}" style="display:flex;gap:.5rem;align-items:center;">
                         @csrf @method('PATCH')
                         <input type="time" name="start_time" value="{{ $slot->formatted_time }}" style="width:100px;">
                 </td>
@@ -50,7 +50,7 @@
 {{-- Block a slot --}}
 <div class="card">
     <div class="card-title">🔒 Заблокировать конкретный слот</div>
-    <form method="POST" action="{{ route('admin.slots.block') }}">
+    <form method="POST" action="{{ route('admin.slots.block', [], false) }}">
         @csrf
         <div class="form-row">
             <div class="form-group">
@@ -97,7 +97,7 @@
                 <td>{{ $block->slot->formatted_time }}</td>
                 <td class="text-muted">{{ $block->reason ?: '—' }}</td>
                 <td>
-                    <form method="POST" action="{{ route('admin.slots.unblock', $block) }}" onsubmit="return confirm('Разблокировать?')">
+                    <form method="POST" action="{{ route('admin.slots.unblock', $block, [], false) }}" onsubmit="return confirm('Разблокировать?')">
                         @csrf @method('DELETE')
                         <button class="btn btn-danger btn-sm">Снять</button>
                     </form>
@@ -136,7 +136,7 @@
                     {{ $booking->telegram_first_name }}
                     @endif
                 </td>
-                <td><a href="{{ route('admin.bookings') }}" class="btn btn-ghost btn-sm">Детали</a></td>
+                <td><a href="{{ route('admin.bookings', [], false) }}" class="btn btn-ghost btn-sm">Детали</a></td>
             </tr>
             @endforeach
         </tbody>

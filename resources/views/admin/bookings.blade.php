@@ -32,7 +32,7 @@
             </div>
             <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
                 {{-- Update meeting URL --}}
-                <form method="POST" action="{{ route('admin.bookings.url', $booking) }}" style="display:flex;gap:.5rem;">
+                <form method="POST" action="{{ route('admin.bookings.url', $booking, [], false) }}" style="display:flex;gap:.5rem;">
                     @csrf @method('PATCH')
                     <input type="url" name="meeting_url" value="{{ $booking->meeting_url }}" placeholder="Ссылка на встречу"
                         style="width:220px; font-size:.8rem; padding:.35rem .6rem;">
@@ -40,13 +40,13 @@
                 </form>
                 {{-- Ban/Unban --}}
                 @if(in_array($booking->telegram_user_id, $bannedUserIds))
-                <form method="POST" action="{{ route('admin.bans.destroy', $booking->telegram_user_id) }}">
+                <form method="POST" action="{{ route('admin.bans.destroy', ['bannedUser' => $booking->telegram_user_id], [], false) }}">
                     @csrf @method('DELETE')
                     <input type="hidden" name="telegram_user_id" value="{{ $booking->telegram_user_id }}">
                     <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--green)">Разбанить</button>
                 </form>
                 @else
-                <form method="POST" action="{{ route('admin.bans.store') }}" style="display:flex;gap:.3rem;align-items:center;">
+                <form method="POST" action="{{ route('admin.bans.store', [], false) }}" style="display:flex;gap:.3rem;align-items:center;">
                     @csrf
                     <input type="hidden" name="telegram_user_id" value="{{ $booking->telegram_user_id }}">
                     <input type="date" name="banned_until" style="width:130px; font-size:.8rem; padding:.35rem .6rem;" required>
@@ -55,7 +55,7 @@
                 @endif
 
                 {{-- Cancel --}}
-                <form method="POST" action="{{ route('admin.bookings.cancel', $booking) }}"
+                <form method="POST" action="{{ route('admin.bookings.cancel', $booking, [], false) }}"
                     onsubmit="return confirm('Отменить запись и уведомить пользователя?')">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-sm">Отменить</button>
@@ -115,13 +115,13 @@
                 </td>
                 <td>
                      @if(in_array($booking->telegram_user_id, $bannedUserIds))
-                    <form method="POST" action="{{ route('admin.bans.destroy', $booking->telegram_user_id) }}">
+                    <form method="POST" action="{{ route('admin.bans.destroy', ['bannedUser' => $booking->telegram_user_id], [], false) }}">
                         @csrf @method('DELETE')
                         <input type="hidden" name="telegram_user_id" value="{{ $booking->telegram_user_id }}">
                         <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--green)">Разбанить</button>
                     </form>
                     @else
-                    <form method="POST" action="{{ route('admin.bans.store') }}" style="display:flex;gap:.3rem;align-items:center;">
+                    <form method="POST" action="{{ route('admin.bans.store', [], false) }}" style="display:flex;gap:.3rem;align-items:center;">
                         @csrf
                         <input type="hidden" name="telegram_user_id" value="{{ $booking->telegram_user_id }}">
                         <input type="date" name="banned_until" style="width:130px; font-size:.8rem; padding:.35rem .6rem;" required>

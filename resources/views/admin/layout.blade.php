@@ -93,10 +93,10 @@
 </head>
 <body>
 <nav>
-    <a href="{{ route('admin.dashboard') }}" class="logo">📞 МитингБот</a>
-    <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Дашборд</a>
-    <a href="{{ route('admin.slots') }}" class="{{ request()->routeIs('admin.slots') ? 'active' : '' }}">Слоты</a>
-    <a href="{{ route('admin.bookings') }}" class="{{ request()->routeIs('admin.bookings') ? 'active' : '' }}">Записи</a>
+    <a href="{{ route('admin.dashboard', [], false) }}" class="logo">📞 МитингБот</a>
+    <a href="{{ route('admin.dashboard', [], false) }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Дашборд</a>
+    <a href="{{ route('admin.slots', [], false) }}" class="{{ request()->routeIs('admin.slots') ? 'active' : '' }}">Слоты</a>
+    <a href="{{ route('admin.bookings', [], false) }}" class="{{ request()->routeIs('admin.bookings') ? 'active' : '' }}">Записи</a>
 </nav>
 <main>
     @if(session('success'))
