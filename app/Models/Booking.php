@@ -10,6 +10,8 @@ class Booking extends Model
     protected $fillable = [
         'slot_id',
         'booking_date',
+        'start_time',
+        'duration_minutes',
         'telegram_user_id',
         'telegram_username',
         'telegram_first_name',
@@ -38,7 +40,7 @@ class Booking extends Model
     public function getCallDatetimeAttribute(): \Carbon\Carbon
     {
         return \Carbon\Carbon::parse(
-            $this->booking_date->toDateString() . ' ' . $this->slot->start_time,
+            $this->booking_date->toDateString() . ' ' . $this->start_time,
             config('app.timezone')
         );
     }
@@ -47,6 +49,11 @@ class Booking extends Model
     public function getUserDatetimeAttribute(): \Carbon\Carbon
     {
         return $this->call_datetime->copy()->setTimezone(config('app.user_timezone', 'Europe/Moscow'));
+    }
+
+    public function getFormattedTimeAttribute(): string
+    {
+        return substr($this->start_time, 0, 5);
     }
 
     /** Format datetime for user messages */

@@ -11,35 +11,34 @@
         <thead>
             <tr>
                 <th>День</th>
-                <th>Время</th>
-                <th>Статус</th>
-                <th>Ссылка на встречу по умолчанию</th>
-                <th>Сохранить</th>
+                <th>Время начала</th>
+                <th>Длительность</th>
+                <th>Настройки</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach($slots as $slot)
             <tr>
                 <td>{{ $slot->day_name }}</td>
-                <td><strong>{{ $slot->formatted_time }}</strong></td>
-                <td>
-                    @if($slot->is_active)
-                    <span class="badge badge-green">Активен</span>
-                    @else
-                    <span class="badge badge-red">Отключён</span>
-                    @endif
-                </td>
                 <td>
                     <form method="POST" action="{{ route('admin.slots.update', $slot) }}" style="display:flex;gap:.5rem;align-items:center;">
                         @csrf @method('PATCH')
-                        <input type="url" name="default_meeting_url" value="{{ $slot->default_meeting_url }}"
-                            placeholder="https://meet.example.com/room" style="min-width:260px;">
-                        <label style="display:flex;align-items:center;gap:.3rem;white-space:nowrap;margin:0;color:var(--muted);">
-                            <input type="checkbox" name="is_active" value="1" @checked($slot->is_active) style="width:auto;"> Активен
-                        </label>
+                        <input type="time" name="start_time" value="{{ $slot->formatted_time }}" style="width:100px;">
                 </td>
                 <td>
-                    <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+                   <input type="number" name="duration_minutes" value="{{ $slot->duration_minutes }}" style="width:60px;" min="5" max="480">
+                   мин.
+                </td>
+                <td>
+                    <input type="url" name="default_meeting_url" value="{{ $slot->default_meeting_url }}"
+                        placeholder="https://meet.example.com/room" style="min-width:200px;">
+                    <label style="display:flex;align-items:center;gap:.3rem;white-space:nowrap;margin:0;color:var(--muted);font-size:.8rem;">
+                        <input type="checkbox" name="is_active" value="1" @checked($slot->is_active) style="width:auto;"> Активен
+                    </label>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-primary btn-sm">💾</button>
                     </form>
                 </td>
             </tr>
@@ -129,7 +128,7 @@
             @foreach($bookings as $booking)
             <tr>
                 <td>{{ $booking->booking_date->locale('ru')->isoFormat('D MMMM (ddd)') }}</td>
-                <td><strong>{{ $booking->slot->formatted_time }}</strong></td>
+                <td><strong>{{ $booking->formatted_time }}</strong></td>
                 <td>
                     @if($booking->telegram_username)
                     {{ '@' . $booking->telegram_username }}

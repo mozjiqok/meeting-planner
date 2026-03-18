@@ -307,6 +307,8 @@ class BookingConversation extends Conversation
         $booking = Booking::create([
             'slot_id'             => $this->selectedSlotId,
             'booking_date'        => $this->selectedDate,
+            'start_time'          => $slot->start_time,
+            'duration_minutes'    => $slot->duration_minutes,
             'telegram_user_id'    => $bot->userId(),
             'telegram_username'   => $bot->user()?->username,
             'telegram_first_name' => $bot->user()?->first_name,

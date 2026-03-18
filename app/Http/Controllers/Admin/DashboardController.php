@@ -54,11 +54,15 @@ class DashboardController extends Controller
     public function updateSlot(Request $request, Slot $slot)
     {
         $validated = $request->validate([
+            'start_time'          => 'required|date_format:H:i',
+            'duration_minutes'    => 'required|integer|min:5|max:480',
             'default_meeting_url' => 'nullable|url|max:500',
             'is_active'           => 'boolean',
         ]);
 
         $slot->update([
+            'start_time'          => $validated['start_time'],
+            'duration_minutes'    => $validated['duration_minutes'],
             'default_meeting_url' => $validated['default_meeting_url'] ?? null,
             'is_active'           => $request->boolean('is_active', true),
         ]);
