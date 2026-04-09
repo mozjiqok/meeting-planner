@@ -67,7 +67,7 @@ class BookingConversation extends Conversation
     {
         $bot->sendMessage(
             "👋 <b>Запись на звонок</b>\n\n" .
-            "Опишите вашу главную проблему или вопрос одним предложением:",
+            "Опишите вашу проблему, вопрос или тему, которую хотите обсудить:",
             parse_mode: ParseMode::HTML
         );
         $this->next('handleQ1');
