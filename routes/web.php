@@ -17,7 +17,9 @@ Route::prefix('admin')->middleware('auth.basic')->group(function () {
 
     // Slots management
     Route::get('/slots', [DashboardController::class, 'slotsIndex'])->name('admin.slots');
+    Route::post('/slots', [DashboardController::class, 'storeSlot'])->name('admin.slots.store');
     Route::patch('/slots/{slot}', [DashboardController::class, 'updateSlot'])->name('admin.slots.update');
+    Route::delete('/slots/{slot}', [DashboardController::class, 'deleteSlot'])->name('admin.slots.delete');
     Route::post('/slots/block', [DashboardController::class, 'blockSlot'])->name('admin.slots.block');
     Route::delete('/slots/block/{slotBlock}', [DashboardController::class, 'unblockSlot'])->name('admin.slots.unblock');
 

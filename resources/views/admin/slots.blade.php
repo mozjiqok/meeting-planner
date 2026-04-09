@@ -4,6 +4,40 @@
 @section('content')
 <h1 class="section-heading">🕐 Управление слотами</h1>
 
+{{-- Add new slot --}}
+<div class="card">
+    <div class="card-title">✨ Добавить новый слот</div>
+    <form method="POST" action="{{ route('admin.slots.store', [], false) }}">
+        @csrf
+        <div class="form-row">
+            <div class="form-group">
+                <label>День недели</label>
+                <select name="day_of_week" required>
+                    @foreach(\App\Models\Slot::DAY_NAMES as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Время начала</label>
+                <input type="time" name="start_time" required>
+            </div>
+            <div class="form-group">
+                <label>Длительность (мин)</label>
+                <input type="number" name="duration_minutes" value="30" min="5" max="480" required>
+            </div>
+            <div class="form-group">
+                <label>Meeting URL (опц)</label>
+                <input type="url" name="default_meeting_url" placeholder="https://...">
+            </div>
+            <div class="form-group" style="flex:0;">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Создать</button>
+            </div>
+        </div>
+    </form>
+</div>
+
 {{-- Slot list with meeting URLs --}}
 <div class="card">
     <div class="card-title">Настройка слотов</div>
@@ -20,25 +54,37 @@
         <tbody>
             @foreach($slots as $slot)
             <tr>
-                <td>{{ $slot->day_name }}</td>
                 <td>
-                    <form method="POST" action="{{ route('admin.slots.update', $slot, [], false) }}" style="display:flex;gap:.5rem;align-items:center;">
-                        @csrf @method('PATCH')
-                        <input type="time" name="start_time" value="{{ $slot->formatted_time }}" style="width:100px;">
+                    <select name="day_of_week" form="update-{{ $slot->id }}" style="width:auto;">
+                        @foreach(\App\Models\Slot::DAY_NAMES as $id => $name)
+                        <option value="{{ $id }}" @selected($slot->day_of_week == $id)>{{ $name }}</option>
+                        @endforeach
+                    </select>
                 </td>
                 <td>
-                   <input type="number" name="duration_minutes" value="{{ $slot->duration_minutes }}" style="width:60px;" min="5" max="480">
+                    <input type="time" name="start_time" value="{{ $slot->formatted_time }}" form="update-{{ $slot->id }}" style="width:100px;">
+                </td>
+                <td>
+                   <input type="number" name="duration_minutes" value="{{ $slot->duration_minutes }}" form="update-{{ $slot->id }}" style="width:60px;" min="5" max="480">
                    мин.
                 </td>
                 <td>
-                    <input type="url" name="default_meeting_url" value="{{ $slot->default_meeting_url }}"
-                        placeholder="https://meet.example.com/room" style="min-width:200px;">
-                    <label style="display:flex;align-items:center;gap:.3rem;white-space:nowrap;margin:0;color:var(--muted);font-size:.8rem;">
-                        <input type="checkbox" name="is_active" value="1" @checked($slot->is_active) style="width:auto;"> Активен
-                    </label>
+                    <div style="display:flex;flex-direction:column;gap:.3rem;">
+                        <input type="url" name="default_meeting_url" value="{{ $slot->default_meeting_url }}" form="update-{{ $slot->id }}"
+                            placeholder="https://meet.example.com/room" style="min-width:200px;">
+                        <label style="display:flex;align-items:center;gap:.3rem;white-space:nowrap;margin:0;color:var(--muted);font-size:.8rem;">
+                            <input type="checkbox" name="is_active" value="1" @checked($slot->is_active) form="update-{{ $slot->id }}" style="width:auto;"> Активен
+                        </label>
+                    </div>
                 </td>
-                <td>
-                    <button type="submit" class="btn btn-primary btn-sm">💾</button>
+                <td style="white-space:nowrap;">
+                    <form id="update-{{ $slot->id }}" method="POST" action="{{ route('admin.slots.update', $slot, [], false) }}">
+                        @csrf @method('PATCH')
+                        <button type="submit" class="btn btn-primary btn-sm" title="Сохранить">💾</button>
+                    </form>
+                    <form method="POST" action="{{ route('admin.slots.delete', $slot, [], false) }}" style="display:inline;" onsubmit="return confirm('Удалить этот слот?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn btn-ghost btn-sm" title="Удалить">🗑️</button>
                     </form>
                 </td>
             </tr>

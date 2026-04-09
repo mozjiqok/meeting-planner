@@ -54,6 +54,7 @@ class DashboardController extends Controller
     public function updateSlot(Request $request, Slot $slot)
     {
         $validated = $request->validate([
+            'day_of_week'         => 'required|integer|min:1|max:7',
             'start_time'          => 'required|date_format:H:i',
             'duration_minutes'    => 'required|integer|min:5|max:480',
             'default_meeting_url' => 'nullable|url|max:500',
@@ -61,6 +62,7 @@ class DashboardController extends Controller
         ]);
 
         $slot->update([
+            'day_of_week'         => $validated['day_of_week'],
             'start_time'          => $validated['start_time'],
             'duration_minutes'    => $validated['duration_minutes'],
             'default_meeting_url' => $validated['default_meeting_url'] ?? null,
@@ -68,6 +70,32 @@ class DashboardController extends Controller
         ]);
 
         return back()->with('success', 'Слот обновлён.');
+    }
+
+    public function storeSlot(Request $request)
+    {
+        $validated = $request->validate([
+            'day_of_week'         => 'required|integer|min:1|max:7',
+            'start_time'          => 'required|date_format:H:i',
+            'duration_minutes'    => 'required|integer|min:5|max:480',
+            'default_meeting_url' => 'nullable|url|max:500',
+        ]);
+
+        Slot::create([
+            'day_of_week'         => $validated['day_of_week'],
+            'start_time'          => $validated['start_time'],
+            'duration_minutes'    => $validated['duration_minutes'],
+            'default_meeting_url' => $validated['default_meeting_url'] ?? null,
+            'is_active'           => true,
+        ]);
+
+        return back()->with('success', 'Слот создан.');
+    }
+
+    public function deleteSlot(Slot $slot)
+    {
+        $slot->delete();
+        return back()->with('success', 'Слот удалён.');
     }
 
     public function blockSlot(Request $request)
